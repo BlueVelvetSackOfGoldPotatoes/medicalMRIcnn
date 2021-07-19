@@ -24,5 +24,13 @@
 Always go with the pipeline flow - it already does everything;
 
 ## WHAT I CAN DO NOW
-Make datasets
+Retrain network
+	a) Make datasets
+		a.i) 3,975/300/600 for training/validation/test
+
 Fit PCAs
+	a) Build pipeline
+		a.i) get pngs (the same that were used to train the networks)
+		a.ii) fit PCA
+		a.iii) calculate distance measurement to bottleneck layer (the one that is the outcome of retraining the network)
+

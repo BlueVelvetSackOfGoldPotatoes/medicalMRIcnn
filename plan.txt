@@ -1,0 +1,169 @@
+To implement the published pipeline for processing the cardiac MRI images from the UK Biobank - https://github.com/baiwenjia/ukbb_cardiac 
+Some of their papers have been sent to you previously (and they also have papers on arxiv explaining the technical bits) . We would like you to set the pipeline up (a conda environment is highly recommended) and test it (for all types i.e. short-axis, long-axis and aortic CMR image). 
+
+We already registered you with the UMCG but are still waiting for the IT account. 
+
+Therefore we suggest 
+1) start trying out on a local pc to understand the components of the pipeline
+     - preferably setting it up inside a conda environment
+     - read the related literature to check the key features of the models 
+2) we will send you a couple of example images to try out the pipeline
+3) set it up in one of our computers with access to the whole dataset and deploy.
+
+
+Try to critically assess while studying the pipeline that could turn into the study question for your thesis project. For example, you could test the pipeline with MRI images NOT from UK biobank and see how they performed (in the direction of sensitivity analysis and assessment of generalization) / a small incremental optimization of the pipeline (in the development direction) .
+
+OVERFITTING
+(i) Make an unsupervised model that learns to predict when training learning curve and validation learning curve diverge
+(ii) save snapshots of weights and after training revert back to the closest snapshot to where the two curves diverge
+(iii) This divergence basically only depends on the validation learning curve -> so I can just feed examples that obey to the input-output similarity measurment treshold - which should be calculated as t
+he network is trained.
+
+ If you do the hamming and threshold you could use an roc as validation method
+ And you could terminate the model
+ But you have to check whether the wrapper that you are using is updating parameters so your model is not "resetted" when terminated
+
+---------------------------
+
+Lastest meeting 25/5
+grhound/imagemorph.c -> for data augmentation
+https://arxiv.org/pdf/2010.01663.pdf
+https://www.nature.com/articles/s41598-020-80610-9
+
+Verificar que o modelo deles realmente deu overfitting usando nova data e testes sem ser as learning curves 
+
+Dependendo da data available na umcg, usar o modelo para essa data. Remover last layer e transfer learning na data da umcg. Ver se funciona bem para ambas as data. 
+
+Tenho de usar o script deles para preparaçao de imagens, e para treinar o modelo + learning curve para observar overfitting. Ideal será pôr um script no root que faz isto? Parecido com o trial script dele? 
+
+Criar a minha pipeline ao Treinar um auto encoder num dataset composto pelo ukbiobank e umcg e usar as learning curves again. Usar k-means para descobrir as diseaaes automaticamente - como
+
+pipeline for training autoencoder - I have to add and remove
+
+deixar o programa automaticamente detectar blurry images, por estas num folder diferente, iterar por elas e perguntar por cada com um score proximo do threshold se 'e aceitavel ou nao: se clicar no botao a imagem vai para o outro folder.
+
+live learning curves: apresentar a learning curve live no programa. Para isso tenho de ler a loss de learning que 'e printed no ecra. 
+
+
+
+######################################################################
+
+cHECK NUMBER OF DATA POINTS AVAILABLE - COPY bAI ET AL.'S METHODOLOGY - HOW DID THEY GO ABOUT USING DATA FROM THE OTHER DATASETS FOR TRAINING AND VERIFYING. 
+
+Check what the metrics are actually measuring and write those on the report. 
+
+Go into the distance measurements and explain them on the report as well.
+
+There's two performance measuring techniques: measuring difference between automatic classification and the manual segmentation
+
+######################################################################
+
+To check model performance on UMCG data is actually quite tricky: 
+	1. Get a sample of short axis images from the UMCG server to my computer
+	1.2. Use https://umcgonline-my.sharepoint.com/:w:/r/personal/j_w_benjamins_umcg_nl/_layouts/15/Doc.aspx?sourcedoc=%7BF8DF09FA-6F08-40A9-B4F0-79CBE7021102%7D&file=Imaging-Data.docx&action=default&mobileredirect=true and UMCG onedrive to transfer the samples
+	1.3. Check if the images match the format that the pipeline expects
+	1.4. Either way, where is the code that preprocesses the images in the pipeline?
+	2. Test these - follow Bai's anaylisis : feed them to the pipeline in local machine using short-axis model.
+	2.1. Do I run the script demo_pipeline.py  on the folder with UMCG data and just with the 
+short-axis analysis?
+	3. Verify that it does not generalise: bad classification in Bai s metrics - where is this verification code? Is it in the pipeline? If not I have to write it myself... 
+		
+
+(DONE X) 1. Get the data with Rsync (both 5 examples from ukbb and the zipped UMCG examples) 
+	Rsync didnt work to local machine - I rsync to windows 7 umcg machine instead (rsync -chavP --stats goncalo@ming2:/home/goncalo/Documents/temp_goncalo_zips/ /home/carvalhog/Desktop
+), and there I copy files to google drive. For some reason, files had to be in /home/goncalo/... not on /mnt/... - the latter were not accessible.
+
+2. Preproccess the data so that the pipeline can us it - check what is happening to the images, essentially the task here is merely organizational - 
+	i. where do the images have to be?  demo_image
+	ii. What is the folder structure? folder per image
+		: e.g. 1 and 2/ an image starting with sa_ED or ES or just sa followed 			by .nii.gz. Also,  demo_csv folder with 4 files: blood_pressure_infor, table_aortic_area, table_atrial_volume, table_ventricular_volume.
+	iii. What does the pipeline expect? That is to say - what is the demo downloading/where is it downloading to/what is it using?
+		SOLUTION? Can I transform a UMCG image so as for it to match a UKBB image before preprocessing so that the complicated code does not have to be changed?
+
+		PROBLEM - I only have the DICOMs for patient A002
+		PROBLEM - pydicom is no longer maintained: does this mean I can't use it or not?
+			SOLVED - by removing dicom and isntalling pydicom
+		PROBLEM - RuntimeWarning: Mean of empty slice.
+		PROBLEM - RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+		PROBLEM - File "/home/goncalo/Documents/UMCG/PROJECTS/ukbb_cardiac/common/cardiac_utils.py", line 194, in determine_aha_coordinate_system
+    _, contours, _ = cv2.findContours(cv2.inRange(epi, 1, 1), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+ValueError: not enough values to unpack (expected 3, got 2)		
+
+3. Create the vectors using PCA and model bottleneck from short-axis model a and calculate the distance metrics before training (this still requires the outputted results from feeding umcg data to the bb pipeline.
+	HOW - Calculate average vectorized image from PCA
+		i) Get data sample from images used in training (bb)
+		ii) Calculate average PCA
+			a) iterate through images
+			b) Vectorize each image using pca
+			c) Calculate average PCA vector by averaging all the resulting vectorized images
+				CODE PLAN: Two methods - script inside the data folder - first method: loop through images and generate list of PCAs by adding vectorized images as elements - second method: iterate through list of vectorized images and generate average pca 
+	Need to check data dimensionality	
+
+4. How to get the bottleneck layer in an operational format? Is it just the model with all other layers removed? - According to prof. Lambert, there is a common approach to achieve this: connecting output nodes to the dense layer.
+#######################################################################
+QUESTIONS
+
+The pipeline needs the following information to make an analysis of a Short-axis image - READ THE CONVERSION FILES
+
+WHAT ARE THE LGE FILES IN /LGE?:w!
+
+WHAT IS THE DIFFERENCE BETWEEN CONTOURS STORED IN FUNCTION AND FUNCTION-RV?
+
+
+ERROR TO SHOW DAVID: curl --upload-file ./A002_zip_dicom.zip https://transfer.sh/A002_zip_dicom.zip
+curl: (35) OpenSSL SSL_connect: Connection reset by peer in connection to transfer.sh:443 
+
+#####################################################################
+
+TODO  --- DATA
+Get training datasets
+	WHICH?
+		i) short axis of the same perspective from ukbb and umcg
+			i. a) Divide the data into training sets according to the Bai (training, validation and verification - all of which need to come from the same distribution)
+				NOTES ON FOLDER ORGANIZATION:
+					- Total 355 folders (221 ukbb and 134 UMCG)
+					- Each folder has the 'Bio' code for if they are ukbb data or not;
+					- Each folder, independantly of being ukbb or umcg, is then divided in series 0501 and 0502 folders;
+					- Each series folder has 500 dicom
+######################################################################
+
+TODO --- TRAINING
+
+Divide available data into datasets:
+	Teoricamente: TRAIN and TEST - usually 80% and 20% - further split training data into 80% training and 20% validation set (following the Pareto principle). 
+	In actuality: 3,975/300/600 for training/validation/test
+
+	2) Load model
+		i) Find model architecture and replicate it
+		ii) Figure out what is model and what is not - first thing read the literature on model loading from tf. Also search the code base for specific keywords.
+
+UMCG DATA
+	A002 -> patient, first (ed) and last (epi) frame and contours of each, 9 pairs (total 18 images) plus two pngs for the contours.
+
+I GOT UKBB DATA FROM /mnt/THORAX_SHARE/5. MRI's/6. Other/DICOMs with and without contours CVI/Short axis/DeepLearningExportSources 
+
+
+UMCG SHORT AXIS DATA IS NOT ON THE DEEPLEARNINGEXPORTS - THIS ONLY HAS THE CONTOURS
+
+###########################
+of ~100 dims to compare with PCA
+convolutional autoencoder with a bottleneck (dense) hidden vector in the middle (instead of PCA). 
+
+For PCA calculate percentage of data used from each dataset and emulate the same in fitting the PCA - the bottom line is defined by available data from UMCG/UKBB data.
+
+TO DO TODAY
+TWO TESTS: 1) FEED UKBB AND UMCG IMAGES TO PIPELINE & 2) FEED UMCG AND UKBB TO LOADED MODEL
+	1) prepare data into the acceptable type:
+		sa_ED.nii.gz : 
+		I)	SO I NEED TO PREPROCESS IMAGES AS WELL IN BOTH CASES
+		II) 	GET PCA FITTED UMCG AND UKBB
+
+QUESTIONS ABOUT RV AND LV - IS THE MODEL CLASSIFYING BOTH SYMULTANEOUSLY? IT SURE IS CREATING THE SEGMENTATION FOR BOTH SIMULTANEOUSLY
+
+ON THE UMCG DATA THE MASKS FOR THE LV GO FROM ED AND ES
+THE IMAGES START ALREADY PRETTY BIG
+
+PROBLEM: I DONT KNOW IF USING THE PROVIDED CODE IS MORE WORK THAN NOT USING IT
+
+CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
