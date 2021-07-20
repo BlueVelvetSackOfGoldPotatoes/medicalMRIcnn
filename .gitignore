@@ -66,4 +66,5 @@ secrets.json
 .jekyll-metadata
 .ruby-version
 goncalo/other/MIRTK_git
-goncalo/thesis_project/files_for_thesis/data/dummy_data
+goncalo/thesis_project/files_for_thesis/data
+goncalo/other
