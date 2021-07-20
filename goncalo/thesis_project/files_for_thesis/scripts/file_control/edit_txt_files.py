@@ -1,3 +1,5 @@
+import file_control.folder_empty as folder_checker
+
 ''' Methods that control file edition
 '''
 
@@ -12,5 +14,8 @@ def clear_files(files):
 def write_ouput_to_file(output, file):
     ''' Writes output to files.
     '''
+    # If folder isn't empty stop the program. 
+    folder_checker.check_folder_empty(file)
+
     with open(file ,"a+") as f:
         f.write(output + "\n")

@@ -1,6 +1,41 @@
 import matplotlib.image as mpimg
 import numpy as np
+import pydicom
+import pillow
+import ntpath
 from matplotlib import pyplot as plt
+
+# def path_leaf(path):
+#     ''' Return file name independently of path shape
+#     '''
+#     head, tail = ntpath.split(path)
+#     return tail or ntpath.basename(head)
+
+def get_names_filetype(path, filetype):
+    ''' Iterates through path and returns list of names of files of type = filetype
+    '''
+    names = []
+    for root, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            _, ext = os.path.splitext(filename)
+            if ext in ['.' + filetype]:
+                names.append(filename)
+    
+    return names
+
+def get_dicom_img(dicom_path):
+    ''' Extract image from dicom and return png
+    '''
+    # Read dicom
+    ds = pydicom.dcmread(dicom_path)
+    # Extract pixel array
+    new_image = ds.pixel_array.astype(float)
+    # Rescale the image
+    scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
+
+    scaled_image = np.uint8(scaled_image)
+    final_image = Image.fromarray(scaled_image)
+    return final_image
 
 def show_img(img):
     ''' Plot the image
@@ -15,10 +50,10 @@ def check_dimension(img):
     '''
     print(img.shape)
 
-def vectorize(img):
+def pca_reduction(img, dimensions):
     ''' PCA dimensionality reduction of img
     '''
-    pca = PCA(2) # Choose number of 2 dimensions
+    pca = PCA(dimensions) # Choose number of dimensions
     vectorized_img = pca.fit_transform(img)
     
     print(converted_data.shape)

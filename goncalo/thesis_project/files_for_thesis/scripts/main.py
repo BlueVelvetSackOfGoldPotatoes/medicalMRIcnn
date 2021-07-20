@@ -1,6 +1,7 @@
 import os
 import urllib.request
 import shutil
+import file_control.convert_dataset as convert
 from pca_control.fit_pca_avg_img import main as fit_pca
 from bai_control.train_network import main as train    
 
@@ -35,6 +36,10 @@ def short_axis_segmentation():
     print('Done.')
 
 def main():
+    input_path = './data/sunnybroke_dataset/sunnybroke_random_sample'
+    output_path = './data/data_pca/sunnybroke_sample'
+
+    convert.dicom_to_jpg_dataset(input_path, output_path)
     # short_axis_segmentation()
     fit_pca()
 
