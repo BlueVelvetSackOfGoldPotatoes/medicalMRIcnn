@@ -19,7 +19,7 @@ def nifti_to_jpg_dataset(input_path, output_path):
     '''
     # If folder isn't empty stop the program. 
     folder_checker.check_folder_empty(output_path)
-    
+
     names = ic.get_names_filetype(input_path, '.nii.gz')
     for name in names:
         os.system('med2image -i ' + input_path + name + '.nii.gz' + '-d ' + output_path + '/' + name + ' /' + '\n' + '--outputFileType jpg')

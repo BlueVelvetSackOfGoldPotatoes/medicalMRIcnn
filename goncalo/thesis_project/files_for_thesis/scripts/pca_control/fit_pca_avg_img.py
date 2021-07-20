@@ -36,6 +36,7 @@ def controller():
     final_vector = dm.calc_average_vector(pca_vectorized)
 
     check_folder.check_folder_empty(results_output)
+    
     ef.write_ouput_to_file(final_vector, results_output)
     print('PCA finished...')
 

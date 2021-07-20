@@ -1,7 +1,7 @@
-import file_control.folder_empty as folder_checker
-
 ''' Methods that control file edition
 '''
+
+import file_control.folder_empty as folder_checker
 
 def clear_files(files):
     ''' Clears files.
