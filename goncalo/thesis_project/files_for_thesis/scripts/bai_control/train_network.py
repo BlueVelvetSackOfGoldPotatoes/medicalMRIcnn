@@ -40,7 +40,6 @@ tf.app.flags.DEFINE_string('model_path',
                            './trained_model',
                            'Path to the saved trained model.')
 
-
 '''
 START OF W. BAI ET AL. ACCURACY MEASURES
 '''
