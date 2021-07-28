@@ -100,6 +100,7 @@ def bottleneck_unit(x, filters, training, strides=1):
             shortcut = tf.layers.conv2d(orig_x, filters=filters, kernel_size=1, strides=strides,
                                         padding='same', use_bias=False)
         x = shortcut + x
+        'WRITE OUT'
     return x
 
 
