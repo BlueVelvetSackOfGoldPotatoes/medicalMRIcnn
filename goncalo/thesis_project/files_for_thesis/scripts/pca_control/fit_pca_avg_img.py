@@ -15,6 +15,15 @@ data_set_dir = './data/data_pca' # use the pngs
 # Files
 results_output = './results/pca_output.txt'
 
+def pca_reduction(img, dimensions):
+    ''' PCA dimensionality reduction of img
+    '''
+    pca = PCA(dimensions) # Choose number of dimensions
+    vectorized_img = pca.fit_transform(img)
+    
+    print(converted_data.shape)
+    return vectorized_img
+
 def controller():
     ''' Main control loop
     '''
@@ -31,7 +40,7 @@ def controller():
             img = ei.crop_image(image, cx, cy, 192)
             img = ei.rescale_intensity(img)
 
-            pca_vectorized.append(ei.pca_reduction(img, 2))
+            pca_vectorized.append(pca_reduction(img, 2))
 
     final_vector = dm.calc_average_vector(pca_vectorized)
 

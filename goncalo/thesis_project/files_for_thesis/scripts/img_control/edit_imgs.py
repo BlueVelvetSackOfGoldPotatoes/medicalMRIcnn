@@ -23,20 +23,6 @@ def get_names_filetype(path, filetype):
     
     return names
 
-def get_dicom_img(dicom_path):
-    ''' Extract image from dicom and return png
-    '''
-    # Read dicom
-    ds = pydicom.dcmread(dicom_path)
-    # Extract pixel array
-    new_image = ds.pixel_array.astype(float)
-    # Rescale the image
-    scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
-
-    scaled_image = np.uint8(scaled_image)
-    final_image = Image.fromarray(scaled_image)
-    return final_image
-
 def show_img(img):
     ''' Plot the image
     '''
@@ -49,15 +35,6 @@ def check_dimension(img):
     ''' Output the dimentions of an image 
     '''
     print(img.shape)
-
-def pca_reduction(img, dimensions):
-    ''' PCA dimensionality reduction of img
-    '''
-    pca = PCA(dimensions) # Choose number of dimensions
-    vectorized_img = pca.fit_transform(img)
-    
-    print(converted_data.shape)
-    return vectorized_img
 
 def rescale_intensity(image, thres=(1.0, 99.0)):
     """ Rescale the image intensity to the range of [0, 1] """
