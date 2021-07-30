@@ -172,3 +172,5 @@ CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
 See if model can be loaded using https://cv-tricks.com/tensorflow-tutorial/save-restore-tensorflow-models-quick-complete-tutorial/ - I think it's not enough to just load current model and retrain: weights will be lost. Have to either add new layer or freeze previous weights.
 
 Get bottleneck output onto a txt file. The file network.py is the one where bottleneck is used. Write out from the function the result into a txt and check when that result is written: when deploying probably? Search for 'WRITE OUT' in network.py.
+
+Using retrain data do bottleneck reduction of one image distance to avg bottleneck reduced vector reduce all images used to retrain and avg the vectors compaired to fitting pca on all images and averaging that and calculating distance between novel image pca reduced. The bottleneck should offer a smaller distance for image used in the training than for images not used. Do the same with pca. The distance for pca should be off (more) than bottleneck. And the overall method should yield a good prediction of the model classification quality.

@@ -1,0 +1,12 @@
+1. Checking if model is being loaded properly in training.py:
+	If it runs and validation is very high then its the proper model (the previously trained model)
+################################################################################
+2. Bottleneck image reduction:
+	This consists in saving logits from bottleneck layer onto a txt file after processing an image using main.py
+		PROBLEMS: bottleneck is only called from build_ResNet in network.py - nothing is using this method at all
+		SOLUTIONS: 
+			1. load model in tf2, strip layers until bottleneck
+			2. load model in tf1, strip layers until bottleneck	
+			3. in train_network call build_ResNet instead of build_FCN and activate bottleneck layer
+################################################################################
+DONE - 3. Preprocess images like in the pipeline before fitting PCA.

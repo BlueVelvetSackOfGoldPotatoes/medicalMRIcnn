@@ -2,6 +2,10 @@
 import tensorflow.compat.v1 as tf
 import tensorflow as tf2
 import numpy as np
+import file_control.edit_txt_files as ef
+
+# logits from bottleneck path
+logits_path = '/home/goncalo/Documents/RUG/4th\ Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/scripts/bai_control/logits_per_image.txt'
 
 def conv2d_bn_relu(x, filters, training, kernel_size=3, strides=1):
     """ Basic Conv + BN + ReLU unit """
@@ -69,7 +73,6 @@ def residual_unit(x, filters, training, strides=1):
         x = shortcut + x
     return x
 
-
 def bottleneck_unit(x, filters, training, strides=1):
     """
         Bottleneck residual learning unit, which implements the unit illustrated
@@ -100,9 +103,11 @@ def bottleneck_unit(x, filters, training, strides=1):
             shortcut = tf.layers.conv2d(orig_x, filters=filters, kernel_size=1, strides=strides,
                                         padding='same', use_bias=False)
         x = shortcut + x
-        'WRITE OUT'
-    return x
+        print('Saving output of bottleneck layer: {}, type:{}'.format(x, type(x)))
+        # print('Writing logits to file')
+        ef.write_output(x, logits_path)
 
+    return x
 
 def linear_1d(sz):
     """ 1D linear interpolation kernel """
@@ -113,9 +118,8 @@ def linear_1d(sz):
     h /= float(c)
     return h
 
-
 def linear_2d(sz):
-    """  """
+    """ 2D linear interpolation kernel """
     W = np.ones((sz, sz), dtype=np.float32)
     h = linear_1d(sz)
     for i in range(sz):
@@ -123,7 +127,6 @@ def linear_2d(sz):
     for j in range(sz):
         W[:, j] *= h
     return W
-
 
 def transpose_upsample2d(x, factor, constant=True):
     """ 2D upsampling operator using transposed convolution """
@@ -161,15 +164,11 @@ def saveModel(x):
     # to load...
     # new_model = tf.keras.models.load_model('saved_model/tf2_converted')
 
-
-
-
-
 def build_FCN(image, n_class, n_level, n_filter, n_block, training, same_dim=32, fc=64):
     """
-        Build a fully convolutional network for segmenting an input image
-        into n_class classes and return the logits map.
-        """
+    Build a fully convolutional network for segmenting an input image
+    into n_class classes and return the logits map.
+    """
     net = {}
     x = image
 

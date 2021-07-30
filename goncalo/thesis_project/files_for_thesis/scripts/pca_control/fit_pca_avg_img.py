@@ -32,7 +32,7 @@ def controller():
 
     pca_vectorized = []
 
-    # iterate through dataset and vectorize each element
+    # iterate through dataset and vectorize each element after preprocessing images according to Bai et al.
     for image in os.listdir(data_set_dir):
         if image.endswith(".jpg"):
             X, Y, Z = image.shape
@@ -46,7 +46,7 @@ def controller():
 
     check_folder.check_folder_empty(results_output)
     
-    ef.write_ouput_to_file(final_vector, results_output)
+    ef.write_ouput(final_vector, results_output)
     print('PCA finished...')
 
 def main():
