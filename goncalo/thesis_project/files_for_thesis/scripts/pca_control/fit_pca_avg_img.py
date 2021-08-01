@@ -32,7 +32,7 @@ def controller():
 
     pca_vectorized = []
 
-    # iterate through dataset and vectorize each element after preprocessing images according to Bai et al.
+    # iterate through dataset and vectorize each element after preprocessing images according to Bai t al.
     for image in os.listdir(data_set_dir):
         if image.endswith(".jpg"):
             X, Y, Z = image.shape

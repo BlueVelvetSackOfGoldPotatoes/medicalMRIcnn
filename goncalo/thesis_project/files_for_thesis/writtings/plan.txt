@@ -169,8 +169,12 @@ PROBLEM: I DONT KNOW IF USING THE PROVIDED CODE IS MORE WORK THAN NOT USING IT
 CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
 
 ##############################################################
-See if model can be loaded using https://cv-tricks.com/tensorflow-tutorial/save-restore-tensorflow-models-quick-complete-tutorial/ - I think it's not enough to just load current model and retrain: weights will be lost. Have to either add new layer or freeze previous weights.
+1. See if model can be loaded using https://cv-tricks.com/tensorflow-tutorial/save-restore-tensorflow-models-quick-complete-tutorial/ - I think it's not enough to just load current model and retrain: weights will be lost. Have to either add new layer or freeze previous weights.
+	1.2 A saver is not a loaded model.
+	1.3 Can I load and retrain encoder of vgg16 and then simply feed the result to Bai decoder - the actual segmentation?
+	1.4 Loading encoder with bai s weights does yield the same achitecture as vgg16 (of course) but with different weights from pretrained vgg16.
 
-Get bottleneck output onto a txt file. The file network.py is the one where bottleneck is used. Write out from the function the result into a txt and check when that result is written: when deploying probably? Search for 'WRITE OUT' in network.py.
+2. Get bottleneck output onto a txt file. The file network.py is the one where bottleneck is used. Write out from the function the result into a txt and check when that result is written: when deploying probably? Search for 'WRITE OUT' in network.py.
+	2.1 Need to change FCN for the one that calls bottleneck with bottleneck = true
 
-Using retrain data do bottleneck reduction of one image distance to avg bottleneck reduced vector reduce all images used to retrain and avg the vectors compaired to fitting pca on all images and averaging that and calculating distance between novel image pca reduced. The bottleneck should offer a smaller distance for image used in the training than for images not used. Do the same with pca. The distance for pca should be off (more) than bottleneck. And the overall method should yield a good prediction of the model classification quality.
+3. Using retrain data do bottleneck reduction of one image distance to avg bottleneck reduced vector reduce all images used to retrain and avg the vectors compaired to fitting pca on all images and averaging that and calculating distance between novel image pca reduced. The bottleneck should offer a smaller distance for image used in the training than for images not used. Do the same with pca. The distance for pca should be off (more) than bottleneck. And the overall method should yield a good prediction of the model classification quality.
