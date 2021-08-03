@@ -25,11 +25,11 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_enum('seq_name', 'sa',
                          ['sa'],
                          'Sequence name.')
-tf.app.flags.DEFINE_string('data_dir', './data/demo_image',
+tf.app.flags.DEFINE_string('data_dir', '../../data/demo_image',
                            'Path to the data set directory, under which images '
                            'are organised in subdirectories for each subject.')
 tf.app.flags.DEFINE_string('model_path',
-                           './trained_model',
+                           '../../trained_model/FCN_sa',
                            'Path to the saved trained model.')
 tf.app.flags.DEFINE_boolean('process_seq', True,
                             'Process a time sequence of images.')
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         sess.run(tf.global_variables_initializer())
 
         # Import the computation graph and restore the variable values
-        saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
+        saver = tf.train.import_meta_graph('{0}/FCN_sa.meta'.format(FLAGS.model_path))
         saver.restore(sess, '{0}'.format(FLAGS.model_path))
 
         print('Start deployment on the data set ...')

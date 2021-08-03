@@ -18,7 +18,7 @@ import math
 import numpy as np
 import nibabel as nib
 import tensorflow as tf
-from ukbb_cardiac.common.image_utils import *
+from common.image_utils import *
 
 
 """ Deployment parameters """

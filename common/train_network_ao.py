@@ -19,9 +19,9 @@ import numpy as np
 import nibabel as nib
 import tensorflow.compat.v1 as tf
 import cv2
-from ukbb_cardiac.common.network import *
-from ukbb_cardiac.common.network_ao import *
-from ukbb_cardiac.common.image_utils import *
+from common.network import *
+from common.network_ao import *
+from common.image_utils import *
 
 
 """ Training parameters """

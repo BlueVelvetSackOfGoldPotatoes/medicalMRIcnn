@@ -10,3 +10,7 @@
 			3. in train_network call build_ResNet instead of build_FCN and activate bottleneck layer
 ################################################################################
 DONE - 3. Preprocess images like in the pipeline before fitting PCA.
+################################################################################
+Problems
+	What is process_seq flag actually doing?
+		if true it is only supposed to process the ED and ES, if false it is supposed to only process sa - right now it s processing both independently of its value

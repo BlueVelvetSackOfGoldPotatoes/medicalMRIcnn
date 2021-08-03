@@ -70,5 +70,9 @@ goncalo/thesis_project/files_for_thesis/data
 goncalo/other
 goncalo/thesis_project/files_for_thesis/trained_model/FCN_sa
 goncalo/thesis_project/files_for_thesis/trained_model/vgg16
-
+goncalo/thesis_project/files_for_thesis/results
+goncalo/thesis_project/files_for_thesis/trained_model
+goncalo/thesis_project/files_for_thesis/data
+demo_csv
+demo_image
 

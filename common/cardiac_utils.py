@@ -24,7 +24,7 @@ from vtk.util import numpy_support
 from scipy import interpolate
 import skimage
 import skimage.measure
-from ukbb_cardiac.common.image_utils import *
+from common.image_utils import *
 
 
 def approximate_contour(contour, factor=4, smooth=0.05, periodic=False):
@@ -191,8 +191,9 @@ def determine_aha_coordinate_system(seg_sa, affine_sa):
     rv = get_largest_cc(rv).astype(np.uint8)
 
     # Extract epicardial contour
-    _, contours, _ = cv2.findContours(cv2.inRange(epi, 1, 1), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    epi_contour = contours[0][:, 0, :]
+    contours = cv2.findContours(cv2.inRange(epi, 1, 1), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    epi_contour = contours[0][:]
+    epi_contour = np.array(epi_contour)
 
     # Find the septum, which is the intersection between LV and RV
     septum = []
@@ -202,9 +203,11 @@ def determine_aha_coordinate_system(seg_sa, affine_sa):
         # Normally, this is fulfilled after just one iteration.
         rv_dilate = cv2.dilate(rv, np.ones((3, 3), dtype=np.uint8), iterations=dilate_iter)
         dilate_iter += 1
-        for y, x in epi_contour:
-            if rv_dilate[x, y] == 1:
-                septum += [[x, y]]
+
+        for x in range(0, epi_contour.shape[0]):
+            for y in range(0, epi_contour.shape[1]):
+                if rv_dilate[x, y] == 1:
+                    septum += [[x, y]]
 
     # The middle of the septum
     mx, my = septum[int(round(0.5 * len(septum)))]

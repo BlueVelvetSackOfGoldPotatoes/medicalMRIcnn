@@ -41,20 +41,20 @@ def short_axis():
     print('  Short-axis image analysis')
     print('******************************')
 
-    # Deploy the segmentation network
+    # Deploy the segmentation network - THIS WORKS!
     print('Deploying the segmentation network ...')
-    os.system('CUDA_VISIBLE_DEVICES={0} python3 common/deploy_network.py --seq_name sa --data_dir demo_image '
+    os.system('CUDA_VISIBLE_DEVICES={0} python3 common/deploy_network.py --seq_name sa --data_dir goncalo/thesis_project/files_for_thesis/data/demo_image '
               '--model_path trained_model/FCN_sa'.format(CUDA_VISIBLE_DEVICES))
 
-    # Evaluate ventricular volumes
+    # Evaluate ventricular volumes - THIS WORKS!
     print('Evaluating ventricular volumes ...')
     os.system('python3 short_axis/eval_ventricular_volume.py --data_dir demo_image '
-              '--output_csv demo_csv/table_ventricular_volume.csv')
+              '--output_csv goncalo/thesis_project/files_for_thesis/results/table_ventricular_volume.csv')
 
-    # Evaluate wall thickness
+    # Evaluate wall thickness - THIS WORKS!
     print('Evaluating myocardial wall thickness ...')
     os.system('python3 short_axis/eval_wall_thickness.py --data_dir demo_image '
-              '--output_csv demo_csv/table_wall_thickness.csv')
+              '--output_csv goncalo/thesis_project/files_for_thesis/results/table_wall_thickness.csv')
     
     print('Done.')
 

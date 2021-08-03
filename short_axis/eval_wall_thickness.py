@@ -15,7 +15,7 @@
 import os
 import argparse
 import pandas as pd
-from ukbb_cardiac.common.cardiac_utils import *
+from common.cardiac_utils import *
 
 
 if __name__ == '__main__':

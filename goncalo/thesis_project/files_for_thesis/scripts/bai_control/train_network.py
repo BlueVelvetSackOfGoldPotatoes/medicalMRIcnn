@@ -27,17 +27,17 @@ tf.app.flags.DEFINE_integer('num_level', 5,
 tf.app.flags.DEFINE_float('learning_rate', 1e-3,
                           'Learning rate.')
 tf.app.flags.DEFINE_string('dataset_dir',
-                           'data',
+                           '../../data/data_for_training',
                            'Path to the dataset directory, which is split into '
                            'training, validation and test subdirectories.')
 tf.app.flags.DEFINE_string('log_dir',
-                           'log',
+                           '../../log',
                            'Directory for saving the log file.')
 tf.app.flags.DEFINE_string('checkpoint_dir',
-                           'checkpoint',
+                           '../../checkpoint',
                            'Directory for saving the trained model.')
 tf.app.flags.DEFINE_string('model_path',
-                           './trained_model',
+                           '../../trained_model/FCN_sa',
                            'Path to the saved trained model.')
 
 '''
@@ -245,6 +245,11 @@ def controller():
                        n_filter=n_filter, n_block=n_block,
                        training=training_pl, same_dim=32, fc=64)
 
+    # ADDED BY GONCALO
+    logits_build_ResNet = build_ResNet(image_pl, n_class, n_level=n_level,
+                       n_filter=n_filter, n_block=n_block,
+                       training=training_pl, use_bottleneck=True, same_dim=32, fc=64)
+
     # The softmax probability and the predicted segmentation
     prob = tf.nn.softmax(logits, name='prob')
     pred = tf.cast(tf.argmax(prob, axis=-1), dtype=tf.int32, name='pred')
@@ -301,7 +306,7 @@ def controller():
         # Initialise variables
         sess.run(tf.global_variables_initializer())
 
-        # Import the computation graph and restore the variable values
+        # Import the computation graph and restore the variable values ADDED BY GONCALO
         saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
         saver.restore(sess, '{0}'.format(FLAGS.model_path))
 
