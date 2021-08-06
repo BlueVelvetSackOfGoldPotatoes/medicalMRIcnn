@@ -178,3 +178,10 @@ CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
 	2.1 Need to change FCN for the one that calls bottleneck with bottleneck = true
 
 3. Using retrain data do bottleneck reduction of one image distance to avg bottleneck reduced vector reduce all images used to retrain and avg the vectors compaired to fitting pca on all images and averaging that and calculating distance between novel image pca reduced. The bottleneck should offer a smaller distance for image used in the training than for images not used. Do the same with pca. The distance for pca should be off (more) than bottleneck. And the overall method should yield a good prediction of the model classification quality.
+--------------------------------
+4/Aug
+1. To get bottleneck results use vgg16 - load it - change arch to match bai (both expected size, layer types, etc)
+2. Compute masks from txts (sunnybrokes)
+
+.pb problem: You are probably passing the path to the .pb file of the frozen model/graph, which is different from the .pb file of a SavedModel, and that's why the SavedModel can't be found. Unlike frozen models/graphs, SavedModels are also associated with an auto-generated folder called "variables", so be sure your .pb file was generated in the correct way as it is described in the docs: https://www.tensorflow.org/guide/saved_model.
+
