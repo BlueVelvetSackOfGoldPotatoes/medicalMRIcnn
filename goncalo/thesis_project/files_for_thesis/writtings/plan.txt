@@ -184,4 +184,10 @@ CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
 2. Compute masks from txts (sunnybrokes)
 
 .pb problem: You are probably passing the path to the .pb file of the frozen model/graph, which is different from the .pb file of a SavedModel, and that's why the SavedModel can't be found. Unlike frozen models/graphs, SavedModels are also associated with an auto-generated folder called "variables", so be sure your .pb file was generated in the correct way as it is described in the docs: https://www.tensorflow.org/guide/saved_model.
+--------------------------------
+8/Aug
+
+Schomaker disagrees with dynamic loading of the model: does not work because VGG16 has different mechanics from Bai's model and weights wouldn't fit.
+	SOLUTION:
+		Retrain the model and save model. Then deploy saved model as a model and strip top layers. 
 

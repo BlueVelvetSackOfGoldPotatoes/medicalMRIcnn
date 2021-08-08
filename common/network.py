@@ -137,12 +137,12 @@ def linear_2d(sz):
 def transpose_upsample2d(x, factor, constant=True):
     """ 2D upsampling operator using transposed convolution """
     x_shape = tf.shape(x)
-    output_shape = tf.stack([x_shape[0], x_shape[1] * factor, x_shape[2] * factor, x.shape[3].value])
+    output_shape = tf.stack([x_shape[0], x_shape[1] * factor, x_shape[2] * factor, x.shape[3]])
 
     # The bilinear interpolation weight for the upsampling filter
     sz = factor * 2 - 1
     W = linear_2d(sz)
-    n = x.shape[3].value
+    n = x.shape[3]
     filt_val = np.zeros((sz, sz, n, n), dtype=np.float32)
     for i in range(n):
         filt_val[:, :, i, i] = W
@@ -162,9 +162,8 @@ def transpose_upsample2d(x, factor, constant=True):
     x_up = tf.nn.conv2d_transpose(x, filter=filt, output_shape=output_shape,
                                   strides=[1, factor, factor, 1], padding='SAME')
     x_out = tf.reshape(x_up,
-                       (x_shape[0], x_shape[1] * factor, x_shape[2] * factor, x.shape[3].value))
+                       (x_shape[0], x_shape[1] * factor, x_shape[2] * factor, x.shape[3]))
     return x_out
-
 
 def build_FCN(image, n_class, n_level, n_filter, n_block, training, same_dim=32, fc=64):
     """
@@ -201,6 +200,13 @@ def build_FCN(image, n_class, n_level, n_filter, n_block, training, same_dim=32,
         for l in range(0, n_level):
             net['conv{0}_same_dim'.format(l)] = conv2d_bn_relu(net['conv{0}'.format(l)], filters=same_dim,
                                                                training=training, kernel_size=1)
+            # FOR SAVING BOTTLENECK OUTPUT
+            # save_level = l
+            
+    # FOR SAVING BOTTLENECK OUTPUT
+    # with open("./bottleneck_rep.txt" ,"a+") as f:
+    #     f.write(image.name)
+    #     f.write(str(net['conv{0}_same_dim'.format(save_level)]) + "\n")
 
     # Upsample the feature maps at each resolution level to the original resolution
     with tf.name_scope('up'):

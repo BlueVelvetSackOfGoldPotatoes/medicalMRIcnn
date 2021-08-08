@@ -21,12 +21,16 @@ import tensorflow.compat.v1 as tf
 from common.network import build_FCN
 from common.image_utils import tf_categorical_accuracy, tf_categorical_dice
 from common.image_utils import crop_image, rescale_intensity, data_augmenter
+from random import seed
+from random import randint
 
+# So that tf.placeholder() can be used
+tf.compat.v1.disable_eager_execution()
 
 """ Parameters """
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_enum('seq_name', 'sa',
-                         ['sa', 'la_2ch', 'la_4ch'],
+                         ['sa'],
                          'Sequence name.')
 tf.app.flags.DEFINE_integer('image_size', 192,
                             'Image size after cropping.')
@@ -34,7 +38,8 @@ tf.app.flags.DEFINE_integer('train_batch_size', 2,
                             'Number of images for each training batch.')
 tf.app.flags.DEFINE_integer('validation_batch_size', 2,
                             'Number of images for each validation batch.')
-tf.app.flags.DEFINE_integer('train_iteration', 50000,
+# 5000 before edit
+tf.app.flags.DEFINE_integer('train_iteration',  100,
                             'Number of training iterations.')
 tf.app.flags.DEFINE_integer('num_filter', 16,
                             'Number of filters for the first convolution layer.')
@@ -43,16 +48,23 @@ tf.app.flags.DEFINE_integer('num_level', 5,
 tf.app.flags.DEFINE_float('learning_rate', 1e-3,
                           'Learning rate.')
 tf.app.flags.DEFINE_string('dataset_dir',
-                           '/vol/medic02/users/wbai/data/cardiac_atlas/UKBB_2964/sa',
+                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/data/data_for_training',
                            'Path to the dataset directory, which is split into '
                            'training, validation and test subdirectories.')
-tf.app.flags.DEFINE_string('log_dir',
-                           '/vol/bitbucket/wbai/ukbb_cardiac/log',
-                           'Directory for saving the log file.')
-tf.app.flags.DEFINE_string('checkpoint_dir',
-                           '/vol/bitbucket/wbai/ukbb_cardiac/model',
-                           'Directory for saving the trained model.')
+tf.app.flags.DEFINE_string('model_path',
+                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/trained_model/FCN_sa',
+                           'Path to the saved trained model.')
 
+''' flag conflict with absl library which tf depends on 
+https://github.com/tensorflow/tensorflow/issues/30472 requires log_dir flag to be changed
+'''
+tf.app.flags.DEFINE_string('log_dir_thesis',
+                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/log',
+                           'Directory for saving the log file.')
+
+tf.app.flags.DEFINE_string('checkpoint_dir',
+                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/checkpoint',
+                           'Directory for saving the trained model.')
 
 def get_random_batch(filename_list, batch_size, image_size=192, data_augmentation=False,
                      shift=0.0, rotate=0.0, scale=0.0, intensity=0.0, flip=False):
@@ -61,8 +73,11 @@ def get_random_batch(filename_list, batch_size, image_size=192, data_augmentatio
     n_selected = 0
     images = []
     labels = []
+    seed(1)
+
     while n_selected < batch_size:
-        rand_index = random.randrange(n_file)
+        rand_index = randint(0, n_file-1)
+
         image_name, label_name = filename_list[rand_index]
         if os.path.exists(image_name) and os.path.exists(label_name):
             print('  Select {0} {1}'.format(image_name, label_name))
@@ -120,7 +135,7 @@ def get_random_batch(filename_list, batch_size, image_size=192, data_augmentatio
 
 def main(argv=None):
     """ Main function """
-    # Go through each subset (training, validation, test) under the data directory
+    # Go through each subset (train, validation, test) under the data directory
     # and list the file names of the subjects
     data_list = {}
     for k in ['train', 'validation', 'test']:
@@ -237,11 +252,25 @@ def main(argv=None):
         print('Start training...')
         start_time = time.time()
 
-        # Create a saver
+        '''
+        From scratch or from the pretrained Bai model?
+        vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        '''
+        # BAI FROM SCRATCH
+        # Create a saver from scratch
         saver = tf.train.Saver(max_to_keep=20)
 
+        # GONCALO THESIS FROM PRETRAINED BAI MODEL
+        # Import the computation graph and restore the variable values ADDED BY GONCALO
+        # CHECK LINE 245
+        # saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
+        # saver.restore(sess, '{0}'.format(FLAGS.model_path))
+        ''' ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        From scratch or from the pretrained Bai model?
+        '''
+
         # Summary writer
-        summary_dir = os.path.join(FLAGS.log_dir, model_name)
+        summary_dir = os.path.join(FLAGS.log_dir_thesis, model_name)
         if os.path.exists(summary_dir):
             os.system('rm -rf {0}'.format(summary_dir))
         train_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'train'), graph=sess.graph)

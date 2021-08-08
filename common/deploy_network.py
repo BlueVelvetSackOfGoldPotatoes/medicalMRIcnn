@@ -18,6 +18,7 @@ import math
 import numpy as np
 import nibabel as nib
 import tensorflow.compat.v1 as tf
+from tensorflow import keras
 from image_utils import rescale_intensity
 
 
@@ -51,6 +52,19 @@ if __name__ == '__main__':
         # Import the computation graph and restore the variable values
         saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
         saver.restore(sess, '{0}'.format(FLAGS.model_path))
+
+        ################################## save model variables - THESIS v
+        # variables_names = [v.name for v in tf.trainable_variables()]
+        # values = sess.run(variables_names)
+        
+        # with open("/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/trained_model/model_archs/bai_loaded_saver.txt" ,"a+") as f:
+        #     for k, v in zip(variables_names, values):
+        #         string = "Variable: " + str(k)
+        #         string = string + "/nShape: " + str(v.shape)
+        #         string = string + "/n" + str(v)
+        #         string = string + "/n"
+        #         f.write(string)
+        ################################## save model variables - THESIS ^
 
         print('Start deployment on the data set ...')
         start_time = time.time()

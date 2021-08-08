@@ -19,4 +19,8 @@ I have a dynamic model when I need a pb, h5 or a frozen model
 
 Is this the model I need - I saved it with top=off which I read should remove the encoder layers.
 
-Model bottleneck
+Model bottleneck ////////////////////////////////////////////////////////////////
+a. It is possible to recreate the model layer by layer
+	 - model are being shown in summary with wrong dimensions even though 		the right ones were sent as args for the layer
+b. It is possible to load vgg16 and then load the weights and change the models layers and their expected dimensions
+	Jumping maxpooling doesn't seem to affect the loaded method - how is this possible since the index is per layer is different?
