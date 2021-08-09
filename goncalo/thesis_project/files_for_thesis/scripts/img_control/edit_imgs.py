@@ -1,8 +1,9 @@
 import matplotlib.image as mpimg
 import numpy as np
 import pydicom
-import pillow
 import ntpath
+import os
+from PIL import Image
 from matplotlib import pyplot as plt
 
 # def path_leaf(path):

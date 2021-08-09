@@ -39,7 +39,7 @@ tf.app.flags.DEFINE_integer('train_batch_size', 2,
 tf.app.flags.DEFINE_integer('validation_batch_size', 2,
                             'Number of images for each validation batch.')
 # 5000 before edit
-tf.app.flags.DEFINE_integer('train_iteration',  100,
+tf.app.flags.DEFINE_integer('train_iteration',  2,
                             'Number of training iterations.')
 tf.app.flags.DEFINE_integer('num_filter', 16,
                             'Number of filters for the first convolution layer.')
@@ -215,7 +215,7 @@ def main(argv=None):
     print('prob.name = ' + prob.name)
     print('pred.name = ' + pred.name)
 
-    # Loss
+    # # Loss
     label_1hot = tf.one_hot(indices=label_pl, depth=n_class)
     label_loss = tf.nn.softmax_cross_entropy_with_logits(labels=label_1hot, logits=logits)
     loss = tf.reduce_mean(label_loss)
@@ -228,7 +228,7 @@ def main(argv=None):
     dice_la = tf_categorical_dice(pred, label_pl, 1)
     dice_ra = tf_categorical_dice(pred, label_pl, 2)
 
-    # Optimiser
+    # # Optimiser
     lr = FLAGS.learning_rate
 
     # We need to add the operators associated with batch_normalization
@@ -258,19 +258,26 @@ def main(argv=None):
         '''
         # BAI FROM SCRATCH
         # Create a saver from scratch
-        saver = tf.train.Saver(max_to_keep=20)
+        # saver = tf.train.Saver(max_to_keep=20)
 
         # GONCALO THESIS FROM PRETRAINED BAI MODEL
         # Import the computation graph and restore the variable values ADDED BY GONCALO
         # CHECK LINE 245
-        # saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
-        # saver.restore(sess, '{0}'.format(FLAGS.model_path))
+
+        print('{0}.meta'.format(FLAGS.model_path))
+
+        # Import the computation graph and restore the variable values
+        saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
+        saver.restore(sess, '{0}'.format(FLAGS.model_path))
+        # output_node_names = [n.name for n in tf.get_default_graph().as_graph_def().node]
+        # print('Output node names:')
+        # print(output_node_names)
         ''' ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         From scratch or from the pretrained Bai model?
         '''
 
         # Summary writer
-        summary_dir = os.path.join(FLAGS.log_dir_thesis, model_name)
+        summary_dir = os.path.join(FLAGS.log_dir_thesis, FLAGS.model_path)
         if os.path.exists(summary_dir):
             os.system('rm -rf {0}'.format(summary_dir))
         train_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'train'), graph=sess.graph)
@@ -363,7 +370,8 @@ def main(argv=None):
             # One epoch needs to go through
             #   1000 subjects * 2 time frames = 2000 images = 1000 training iterations
             # if one iteration processes 2 images.
-            if iteration % 1000 == 0:
+            # GONCALO THESIS - WAS 1000 
+            if iteration % 100 == 0:
                 saver.save(sess, save_path=os.path.join(model_dir, '{0}.ckpt'.format(model_name)),
                            global_step=iteration)
 

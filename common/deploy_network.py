@@ -31,7 +31,7 @@ tf.app.flags.DEFINE_string('data_dir', '/vol/bitbucket/wbai/own_work/ukbb_cardia
                            'Path to the data set directory, under which images '
                            'are organised in subdirectories for each subject.')
 tf.app.flags.DEFINE_string('model_path',
-                           '',
+                           './trained_model/FCN_sa',
                            'Path to the saved trained model.')
 tf.app.flags.DEFINE_boolean('process_seq', True,
                             'Process a time sequence of images.')
@@ -52,6 +52,7 @@ if __name__ == '__main__':
         # Import the computation graph and restore the variable values
         saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
         saver.restore(sess, '{0}'.format(FLAGS.model_path))
+        # saver.save(sess, 'FCN_sa')
 
         ################################## save model variables - THESIS v
         # variables_names = [v.name for v in tf.trainable_variables()]

@@ -232,8 +232,8 @@ def build_FCN(image, n_class, n_level, n_filter, n_block, training, same_dim=32,
         x = conv2d_bn_relu(x, filters=fc, training=training, kernel_size=1)
         x = conv2d_bn_relu(x, filters=fc, training=training, kernel_size=1)
         logits = tf.layers.conv2d(x, filters=n_class, kernel_size=1, padding='same')
-    return logits
 
+    return logits
 
 def build_ResNet(image, n_class, n_level, n_filter, n_block, training,
                  use_bottleneck=False, same_dim=32, fc=64):
@@ -302,4 +302,5 @@ def build_ResNet(image, n_class, n_level, n_filter, n_block, training,
         x = conv2d_bn_relu(x, filters=fc, training=training, kernel_size=1)
         x = conv2d_bn_relu(x, filters=fc, training=training, kernel_size=1)
         logits = tf.layers.conv2d(x, filters=n_class, kernel_size=1, padding='same')
+
     return logits

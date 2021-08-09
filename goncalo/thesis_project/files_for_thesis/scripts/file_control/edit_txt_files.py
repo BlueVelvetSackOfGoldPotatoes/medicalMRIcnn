@@ -2,7 +2,7 @@
 '''
 import sys
 import os
-import folder_empty
+from .folder_empty import *
 
 def check_file_empty(file_path):
     ''' Terminates program if there s an attempt at

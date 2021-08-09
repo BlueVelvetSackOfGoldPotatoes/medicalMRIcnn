@@ -190,4 +190,8 @@ CAN I GET THE WEIGHTS AND LAYERS ONTO A NEW MODEL AND TRAIN THAT ONE INSTEAD
 Schomaker disagrees with dynamic loading of the model: does not work because VGG16 has different mechanics from Bai's model and weights wouldn't fit.
 	SOLUTION:
 		Retrain the model and save model. Then deploy saved model as a model and strip top layers. 
-
+			Session in train_network_ao.py where UNet-LSTM weights are loaded needs to be changed to the actual bai weights and then we re probably retraining the network!
+			Validations are not working:
+				validation Dice LV:           
+				validation Dice Myo:          
+				validation Dice RV: 

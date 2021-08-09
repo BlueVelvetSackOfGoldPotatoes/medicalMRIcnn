@@ -1,7 +1,7 @@
-import img_control.edit_imgs as ic
-import pillow
+from ..img_control import edit_imgs as ic
+from PIL import Image
 import os
-import file_control.folder_empty as folder_checker
+from ..file_control import folder_empty as folder_checker
 
 def get_dicom_img(dicom_path):
     ''' Extract image from dicom and return png
@@ -32,8 +32,9 @@ def nifti_to_jpg_dataset(input_path, output_path):
     ''' Convert nifti images tp jpg.
     '''
     # If folder isn't empty stop the program. 
-    folder_checker.check_folder_empty(output_path)
+    # folder_checker.check_folder_empty(output_path)
 
-    names = ic.get_names_filetype(input_path, '.nii.gz')
+    names = ic.get_names_filetype(input_path, 'gz')
+    print(names)
     for name in names:
-        os.system('med2image -i ' + input_path + name + '.nii.gz' + '-d ' + output_path + '/' + name + ' /' + '\n' + '--outputFileType jpg')
+        os.system('med2image -i "' + input_path + name + '" -d "' + output_path + '/' + name + '" --outputFileType jpg')
