@@ -136,17 +136,18 @@ if __name__ == '__main__':
                     # print("image_fr: ", image_fr)
                     # print("prob_fr: ", prob_fr)
 
-                    print(" Finding bottleneck ----------------------------------------------------")
-                    print(" Plotting image ###################")
+                    # Finding bottleneck ----------------------------------------------------
+                    print(" Plotting image...")
                     # (12, 224, 208, 1)
                     image_fr_img = np.squeeze(image_fr, axis=3)
                     # (224, 208, 12)
                     image_fr_img = np.transpose(image_fr_img, (1,2,0))
+                    labels_prob = ["LV-CAVITY, RV-MYOCARDIUM, and RV-CAVITY", "LV-CAVITY", "RV-MYOCARDIUM", "RV-CAVITY"]
                     for i in range(12):
                         plt.imshow(image_fr_img[:, :, i], cmap='gray')
                         plt.show()
 
-                        print(" Plotting probs ###################")
+                        print(" Plotting probs...")
                         # (12, 224, 208, 4)
                         prob_fr_img_prob = []
                         prob_fr_img_prob.append(prob_fr[:,:,:,0])
@@ -154,12 +155,14 @@ if __name__ == '__main__':
                         prob_fr_img_prob.append(prob_fr[:,:,:,2])
                         prob_fr_img_prob.append(prob_fr[:,:,:,3])
                         prob_fr_img_prob = np.array(prob_fr_img_prob)
-
+                        label_index = 0
                         for img_prob in prob_fr_img_prob:
+                            print(labels_prob[label_index])
                             # (224, 208, 12)
                             prob_fr_img = np.transpose(img_prob, (1,2,0))
                             plt.imshow(prob_fr_img[:, :, i], cmap='gray')
                             plt.show()
+                            label_index += 1
 
                 seg_time = time.time() - start_seg_time
                 print('  Segmentation time = {:3f}s'.format(seg_time))
