@@ -16,17 +16,17 @@ import os
 import time
 import math
 import numpy as np
+import matplotlib.pyplot as plt
 import nibabel as nib
 import tensorflow.compat.v1 as tf
-from tensorflow import keras
 from image_utils import rescale_intensity
-
 
 """ Deployment parameters """
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_enum('seq_name', 'sa',
                          ['sa', 'la_2ch', 'la_4ch'],
                          'Sequence name.')
+# Bai default data_dir: '/vol/bitbucket/wbai/own_work/ukbb_cardiac_demo'
 tf.app.flags.DEFINE_string('data_dir', '/vol/bitbucket/wbai/own_work/ukbb_cardiac_demo',
                            'Path to the data set directory, under which images '
                            'are organised in subdirectories for each subject.')
@@ -82,8 +82,8 @@ if __name__ == '__main__':
                 seg_name = '{0}/seg4_{1}.nii.gz'.format(data_dir, FLAGS.seq_name)
             else:
                 seg_name = '{0}/seg_{1}.nii.gz'.format(data_dir, FLAGS.seq_name)
-            if os.path.exists(seg_name):
-                continue
+            # if os.path.exists(seg_name):
+            #     continue
 
             if FLAGS.process_seq:
                 # Process the temporal sequence
@@ -133,6 +133,33 @@ if __name__ == '__main__':
                     pred_fr = np.transpose(pred_fr, axes=(1, 2, 0))
                     pred_fr = pred_fr[x_pre:x_pre + X, y_pre:y_pre + Y]
                     pred[:, :, :, t] = pred_fr
+                    # print("image_fr: ", image_fr)
+                    # print("prob_fr: ", prob_fr)
+
+                    print(" Finding bottleneck ----------------------------------------------------")
+                    print(" Plotting image ###################")
+                    # (12, 224, 208, 1)
+                    image_fr_img = np.squeeze(image_fr, axis=3)
+                    # (224, 208, 12)
+                    image_fr_img = np.transpose(image_fr_img, (1,2,0))
+                    for i in range(12):
+                        plt.imshow(image_fr_img[:, :, i], cmap='gray')
+                        plt.show()
+
+                        print(" Plotting probs ###################")
+                        # (12, 224, 208, 4)
+                        prob_fr_img_prob = []
+                        prob_fr_img_prob.append(prob_fr[:,:,:,0])
+                        prob_fr_img_prob.append(prob_fr[:,:,:,1])
+                        prob_fr_img_prob.append(prob_fr[:,:,:,2])
+                        prob_fr_img_prob.append(prob_fr[:,:,:,3])
+                        prob_fr_img_prob = np.array(prob_fr_img_prob)
+
+                        for img_prob in prob_fr_img_prob:
+                            # (224, 208, 12)
+                            prob_fr_img = np.transpose(img_prob, (1,2,0))
+                            plt.imshow(prob_fr_img[:, :, i], cmap='gray')
+                            plt.show()
 
                 seg_time = time.time() - start_seg_time
                 print('  Segmentation time = {:3f}s'.format(seg_time))
