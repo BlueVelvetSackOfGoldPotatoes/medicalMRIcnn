@@ -32,3 +32,10 @@ def calc_euclidean_distance(vector1, vector2):
     
     return distance
 
+def main():
+    """
+    Write code here for calculating distance across vectors and saving them. IMPORTANT: NEED A WAY OF KEEPING TRACK OF WHAT VECTOR BELONGS TO WHAT IMAGE: USE A TAG BEFORE THE VECTOR THAT FINISHES ON A SYMBOL THAT IS DETECTABLE
+    """
+
+if __name__ == '__main__':
+    main()

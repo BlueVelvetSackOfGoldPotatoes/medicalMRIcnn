@@ -44,6 +44,7 @@ npm-debug.log
 *.log
 *.sql
 *.sqlite
+*.npy
 
 # OS generated files #
 ######################
@@ -74,6 +75,13 @@ goncalo/thesis_project/files_for_thesis/results
 goncalo/thesis_project/files_for_thesis/trained_model
 goncalo/thesis_project/files_for_thesis/data
 demo_csv
-demo_image
 FCN_sa_level5_filter16_22333_batch2_iter5_lr0.001/*
 goncalo/FCN_sa/*
+par
+common/seg_img_matrixes/
+goncalo/thesis_project/files_for_thesis/saved_model/
+goncalo/thesis_project/files_for_thesis/scripts/pca_control/pca_vector_results.txt
+demo_image/
+goncalo/thesis_project/files_for_thesis/log/
+
+__pycache__

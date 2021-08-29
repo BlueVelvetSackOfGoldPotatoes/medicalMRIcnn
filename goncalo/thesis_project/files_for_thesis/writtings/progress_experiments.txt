@@ -24,3 +24,79 @@ a. It is possible to recreate the model layer by layer
 	 - model are being shown in summary with wrong dimensions even though 		the right ones were sent as args for the layer
 b. It is possible to load vgg16 and then load the weights and change the models layers and their expected dimensions
 	Jumping maxpooling doesn't seem to affect the loaded method - how is this possible since the index is per layer is different?
+	
+/////////////////////////////////////////////////////////////////////////////////
+
+Need to freeze BN layers somehow and finetune the rest of the model according to:https://www.tensorflow.org/guide/keras/transfer_learning
+Install tensorflow source code through Bazel and run the codes through there.
+
+Save loaded model with top off and use that to generate the matrices
+Use logits from bai model
+Use PCA
+		Using retrain data do bottleneck reduction of one image distance to avg bottleneck reduced vector reduce all images used to retrain and avg the vectors compaired to fitting pca on all 			images and averaging that and calculating distance between novel image pca reduced. The bottleneck should offer a smaller distance for image used in the training than for images not 			used. Do the same with pca. The distance for pca should be off (more) than bottleneck. And the overall method should yield a good prediction of the model classification quality.
+		
+		1) Need niftis: so translate dicoms to nifti
+		2) Eval niftis: according to the network
+		3) Average vectors from PCA and Bottleneck layer of sunny dataset except for one image vs image pixel array (ds.pixel_array)
+			Save outputs and try to plot them
+			Make dataset from UMCG
+			
+			Found the output: 
+				first in matrix is the three segmentation (LV, RV, LV-MYOCARDIUM), second is RV cavity, RV myocardium, LV.
+		
+		FEED NETWORK: DICOM TO NIFTI, DONE
+		FEED PCA: DICOM TO PNG, APPLY BAI IMAGE TRANSFORMATIONS, DONE
+		GET PIXEL ARRAY: DICOM TO PNG, TRANSFORM, PNG TO DICOM, GET PIXEL
+	
+	I can calculate distance measure using ukbb data without retraining because I already have Bai model which was trained on ukbb data.
+		PROBLEM: I wont know if an image is a novel image or not.
+	If I retrain, I need to save images to feed as novel images to the model.
+	
+/////////////////////////////////////////////////////////////////////////////////	
+		WHAT I HAVE
+			Broken retrain script (missing freeze)
+			Working deploy network script
+			Dummy masks and dicoms
+			Processed images from Bai's pipeline
+			I can translate dicoms to nifti and back
+			I can get pngs from dicoms and nifti and back
+			There s a script for pca and writing the generated vectors
+			There's a script to calculate average vector from vectors and distance between vectors and average vector
+			
+		WHAT I NEED
+			UMCG datasets that follow bai's format
+			save matrices to a file while keeping these linked to the original images (matrix dataset)
+			* Datasets to be used in the three experiments proposed by professor Schomaker:
+				PCA or autoencoder for obtaining a full-image feature vector then centroids for the classes then nearest mean on test set: accuracy for raw full image performance
+				Exp 2: Same as before but with masked images where irrelevant stuff is black.
+				Exp 3: Almost the same but the PCA is fitted on masked images instead of on raw images.
+				(GO THROUGH THIS FOR EXP 1, 2, AND 3 - DIFFERENCE IS THE DATASETS: IMPORTANT: NEED A WAY OF KEEPING TRACK OF WHAT VECTOR BELONGS TO WHAT IMAGE: USE A TAG BEFORE THE 				VECTOR THAT FINISHES ON A SYMBOL THAT IS DETECTABLE)
+			Do the same (as in *) with bottleneck layer
+				Write method in deploy_network.py to save the generated vectors on a file		
+						
+ARRAY
+
+Questions to Jan:
+	Where is the data
+	Taking into consideration the data format expected by the pipeline, what data should I get
+    	/mnt/THORAX_SHARE\5. MRI's\2. GIPS-III MRI's\DeepLearningExports\RV
+    
+    Script for filling up 
+    ${​​​itc-main-repo}​​​/SharedScripts/Python/Lib/umcg/dicom/exports/cvi/read_and_convert_ukbio_functions.py
+    line 590 - 610
+
+TAKE AN IMAGE AND PUT OVERLAY OF COLOR ON THE IMAGE
+${itc-main-repo}/JW/UKBIO/Aorta-Distensibility/00.ModelDev-and-Pipeline/17.AO_dist3_segmentation/01.Keras_NOUS/17.validate_ao_dist_3.export_observer_annotations.py line 349 and following
+TO ADD COLORS TO SEGMENTATION	
+    current_mask = np.reshape(current_mask, (current_mask.shape[0], current_mask.shape[1], 1))
+    current_mask = current_mask * rgb_masks
+    img_with_masks = np.maximum(img_with_masks, current_mask)
+    
+	MAKE BLACK
+	FILL IN MASK
+	MULTIPLY BY 128
+	CREATE ANOTHER MATRIX WITH ANOTHER MASK WITH VALUE FOR BLACK AND WHITE
+	MAXIMIZE BOTH MATRICES
+
+	
+		

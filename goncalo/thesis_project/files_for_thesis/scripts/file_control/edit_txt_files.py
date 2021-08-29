@@ -38,10 +38,5 @@ def clear_files(files):
 def write_output(output, file):
     ''' Writes output to files.
     '''
-    # Check if folder empty and exists
-    folder_empty.check_folder_empty(file)
-    # Check if file empty and exists
-    check_file_empty(file)
-
     with open(file ,"a+") as f:
         f.write(output + "\n")

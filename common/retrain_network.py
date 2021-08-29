@@ -34,9 +34,9 @@ tf.app.flags.DEFINE_enum('seq_name', 'sa',
                          'Sequence name.')
 tf.app.flags.DEFINE_integer('image_size', 192,
                             'Image size after cropping.')
-tf.app.flags.DEFINE_integer('train_batch_size', 2,
+tf.app.flags.DEFINE_integer('train_batch_size', 3,
                             'Number of images for each training batch.')
-tf.app.flags.DEFINE_integer('validation_batch_size', 2,
+tf.app.flags.DEFINE_integer('validation_batch_size', 3,
                             'Number of images for each validation batch.')
 # 5000 before edit
 tf.app.flags.DEFINE_integer('train_iteration',  10,
@@ -45,6 +45,7 @@ tf.app.flags.DEFINE_integer('num_filter', 16,
                             'Number of filters for the first convolution layer.')
 tf.app.flags.DEFINE_integer('num_level', 5,
                             'Number of network levels.')
+# Was 1e-3 before; using 1e-5 for finetuning  
 tf.app.flags.DEFINE_float('learning_rate', 1e-3,
                           'Learning rate.')
 tf.app.flags.DEFINE_string('dataset_dir',
@@ -63,7 +64,7 @@ tf.app.flags.DEFINE_string('log_dir_thesis',
                            'Directory for saving the log file.')
 
 tf.app.flags.DEFINE_string('checkpoint_dir',
-                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/retrained_FCN_sa_checkpoint',
+                           '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/checkpoint/',
                            'Directory for saving the trained model.')
 
 def get_random_batch(filename_list, batch_size, image_size=192, data_augmentation=False,
@@ -153,6 +154,7 @@ def main(argv=None):
 
 
     saver = tf.train.import_meta_graph('{0}.meta'.format(FLAGS.model_path))
+
     # Prepare tensors for the image and label map pairs
     # Use int32 for label_pl as tf.one_hot uses int32
     image_pl = tf.placeholder(tf.float32, shape=[None, None, None, 1], name='image')
@@ -247,26 +249,58 @@ def main(argv=None):
  
         # target_layer = len(output_node_names)
         # print(target_layer)
-        # for l in tf.trainable_variables():
-        #     print(l)
+        for l in tf.trainable_variables():
+            print(l)
+        
+        # exit()
 
         graph = tf.get_default_graph()
+        # ATTEMPTING TO FREEZE BATCHNORM LAYERS
+        print("------------------ FREEZING BATCH NORMALIZATION NODES FOR FINE TUNING ------------------")
+        fold_constants(ignore_errors=true)
+        fold_batch_norms
+
         ## Prepare the feed_dict for feeding data for fine-tuning 
         
+        # FREEZE UP TO THIS TENSOR - what I actually have to freeze are the BN layers.
         #Access the appropriate output for fine-tuning
-        f12= graph.get_tensor_by_name('batch_normalization_12/gamma:0')
-        f12 = tf.stop_gradient(f12) # It's an identity function
-        f12_shape= f12.get_shape().as_list()
+        # tensor_freeze = graph.get_tensor_by_name('conv2d_20/bias_1:0')
+        
+        # Attempting to freeze bn layers
+        # print("------------------ FREEZING BATCH NORMALIZATION NODES FOR FINE TUNING ------------------")
+        # bn_node_names = "batch_normalization/gamma,batch_normalization_1/beta,batch_normalization_1/gamma,batch_normalization_2/beta,batch_normalization_2/gamma,batch_normalization_3/beta,batch_normalization_3/gamma,batch_normalization_4/beta,batch_normalization_4/gamma,batch_normalization_5/beta,batch_normalization_5/gamma,batch_normalization_6/beta,batch_normalization_6/gamma,batch_normalization_7/beta,batch_normalization_7/gamma,batch_normalization_8/beta,batch_normalization_8/gamma,batch_normalization_9/beta,batch_normalization_9/gamma,batch_normalization_10/beta,batch_normalization_10/gamma,batch_normalization_11/beta,batch_normalization_11/gamma,batch_normalization_12/beta,batch_normalization_12/gamma,batch_normalization_13/beta,batch_normalization_13/gamma,batch_normalization_14/beta,batch_normalization_14/gamma,batch_normalization_15/beta,batch_normalization_15/gamma,batch_normalization_16/beta,batch_normalization_16/gamma,batch_normalization_17/beta,batch_normalization_17/gamma,batch_normalization_18/beta,batch_normalization_18/gamma,batch_normalization_19/beta,batch_normalization_19/gamma"
+        # bn_node_names = bn_node_names.split(",")
+        # print(bn_node_names)
+
+        # DEPRECATED - We use a built-in TF helper to export variables to constants 
+        # tensor_freeze = tf.graph_util.convert_variables_to_constants(
+        #     sess, # The session is used to retrieve the weights
+        #     tf.get_default_graph().as_graph_def(), # The graph_def is used to retrieve the nodes 
+        #     bn_node_names # The output node names are used to select the usefull nodes
+        # ) 
+
+        # NOT DEPRECATED - We use a built-in TF helper to export variables to constants 
+        # tensor_freeze = tf.graph_util.extract_sub_graph(
+        #     tf.get_default_graph().as_graph_def(), # The graph_def is used to retrieve the nodes 
+        #     bn_node_names # The output node names are used to select the usefull nodes
+        # )
+
+        # SAVE FROZEN GRAPH
+        # with tf.gfile.GFile("/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/saved_model/bn_frozen", "wb") as f:
+        #     f.write(tensor_freeze.SerializeToString())
+        # print("{0} ops in the final graph.".format(len(tensor_freeze.node)))
+        # print("---------------------------------------------------------------------------------------------")
 
         # Summary writer
-        summary_dir = os.path.join(FLAGS.log_dir_thesis, FLAGS.model_path)
+        summary_dir = FLAGS.log_dir_thesis
         if os.path.exists(summary_dir):
             os.system('rm -rf {0}'.format(summary_dir))
         train_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'train'), graph=sess.graph)
         validation_writer = tf.summary.FileWriter(os.path.join(summary_dir, 'validation'), graph=sess.graph)
 
         # Initialise variables
-        sess.run(tf.global_variables_initializer())
+        init_op = tf.global_variables_initializer()
+        sess.run(init_op)
 
         # Iterate
         for iteration in range(1, 1 + FLAGS.train_iteration):
@@ -338,7 +372,7 @@ def main(argv=None):
             # if one iteration processes 2 images.
             # GONCALO THESIS - WAS 1000 
             if iteration % 10 == 0:
-                saver.save(sess, save_path=os.path.join(model_dir, '{0}.ckpt'.format(model_name)),
+                saver.save(sess, save_path=os.path.join(model_dir, '{0}'.format(model_name)),
                            global_step=iteration)
 
         # Close the summary writers

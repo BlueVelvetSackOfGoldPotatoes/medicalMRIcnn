@@ -1,10 +1,10 @@
-''' Calculate average vectorized image from PCA
+'''
+Generate PCA reduction vectors
 '''
 import os
 import argparse
 import img_control.edit_imgs as ei
 import file_control.edit_txt_files as ef
-import file_control.folder_empty as check_folder
 import distance_measure_control.distance_measure as dm
 from sklearn.decomposition import PCA
 
@@ -27,12 +27,10 @@ def pca_reduction(img, dimensions):
 def controller():
     ''' Main control loop
     '''
-    # Clear files with every run.
-    clear_files(results_output)
-
+    results_output = "./pca_vector_results.txt"
     pca_vectorized = []
 
-    # iterate through dataset and vectorize each element after preprocessing images according to Bai t al.
+    # Iterate through dataset and vectorize each element after preprocessing images according to Bai et al.
     for image in os.listdir(data_set_dir):
         if image.endswith(".jpg"):
             X, Y, Z = image.shape
@@ -43,8 +41,6 @@ def controller():
             pca_vectorized.append(pca_reduction(img, 2))
 
     final_vector = dm.calc_average_vector(pca_vectorized)
-
-    check_folder.check_folder_empty(results_output)
     
     ef.write_ouput(final_vector, results_output)
     print('PCA finished...')

@@ -15,7 +15,6 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
 
-
 def conv2d_bn_relu(x, filters, training, kernel_size=3, strides=1):
     """ Basic Conv + BN + ReLU unit """
     x_conv = tf.layers.conv2d(x, filters=filters, kernel_size=kernel_size,
@@ -133,7 +132,6 @@ def linear_2d(sz):
         W[:, j] *= h
     return W
 
-
 def transpose_upsample2d(x, factor, constant=True):
     """ 2D upsampling operator using transposed convolution """
     x_shape = tf.shape(x)
@@ -200,13 +198,12 @@ def build_FCN(image, n_class, n_level, n_filter, n_block, training, same_dim=32,
         for l in range(0, n_level):
             net['conv{0}_same_dim'.format(l)] = conv2d_bn_relu(net['conv{0}'.format(l)], filters=same_dim,
                                                                training=training, kernel_size=1)
-            # FOR SAVING BOTTLENECK OUTPUT
-            # save_level = l
             
     # FOR SAVING BOTTLENECK OUTPUT
     # with open("./bottleneck_rep.txt" ,"a+") as f:
     #     f.write(image.name)
     #     f.write(str(net['conv{0}_same_dim'.format(save_level)]) + "\n")
+    #  print("Before concatenating, these are the features: ", net['conv{0}_same_dim'.format(n_level)])
 
     # Upsample the feature maps at each resolution level to the original resolution
     with tf.name_scope('up'):

@@ -3,6 +3,7 @@ import numpy as np
 import pydicom
 import ntpath
 import os
+import nibabel as nib
 from PIL import Image
 from matplotlib import pyplot as plt
 
@@ -68,4 +69,19 @@ def crop_image(image, cx, cy, size):
     else:
         print('Error: unsupported dimension, crop.ndim = {0}.'.format(crop.ndim))
         exit(0)
+    print(crop.shape)
     return crop
+
+def main():
+    for infile in glob.glob("*.jpg"):
+        file, ext = os.path.splitext(infile)
+        with Image.open(infile) as im:
+            X, Y, Z = im.shape
+            cx, cy = int(X / 2), int(Y / 2)
+            image = crop_image(im, cx, cy, 192)
+            # Intensity rescaling
+            image = rescale_intensity(image, (1.0, 99.0))
+            im.save(file + "JPEG")
+
+if __name__ == '__main__':
+    main()

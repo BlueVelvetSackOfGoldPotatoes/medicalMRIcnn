@@ -195,3 +195,24 @@ Schomaker disagrees with dynamic loading of the model: does not work because VGG
 				validation Dice LV:           
 				validation Dice Myo:          
 				validation Dice RV: 
+--------------------------------
+20/Aug
+
+In training
+	self.dense.trainable = False
+	layer.trainable = False
+
+for PCA:
+	PCA or autoencoder for obtaining a full-image feature vector then centroids for the classes then nearest mean on test set: accuracy for raw full image performance
+	Exp 2: Same as before but with masked images where irrelevant stuff is black.
+	Exp 3: Almost the same but the PCA is fitted on masked images instead of on raw images.
+	Other MRI data where segm is needed
+	Or microscopy: cells alone determine the classification after masking - backg. black
+	
+	GO THROUGH THIS FOR EXP 1, 2, AND 3 - DIFFERENCE IS THE DATASETS: IMPORTANT: NEED A WAY OF KEEPING TRACK OF WHAT VECTOR BELONGS TO WHAT IMAGE: USE A TAG BEFORE THE VECTOR THAT FINISHES ON A SYMBOL THAT IS DETECTABLE
+		There s a script for pca and writing the generated vectors
+		There's a script to calculate average vector and distance between vectors and average vector
+		
+Do the same with bottleneck layer
+	Write method in deploy_network.py to save the generated vectors on a file
+
