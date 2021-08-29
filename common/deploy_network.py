@@ -51,7 +51,7 @@ tf.app.flags.DEFINE_boolean('seg4', False,
 # THESIS FLAGS
 tf.app.flags.DEFINE_boolean('make_avg_matrix', False,
                             'Code for building the avg matrix')
-tf.app.flags.DEFINE_boolean('make_seg_matrices', True,
+tf.app.flags.DEFINE_boolean('make_seg_matrices', False,
                             'Code for building segmentation matrices')
 tf.app.flags.DEFINE_boolean('deploy_updated_model', False,
                             'Process data using loaded updated model instead of pipeline')
@@ -242,9 +242,11 @@ if __name__ == '__main__':
 
                         # print(" Plotting image...")
                         # # (12, 224, 208, 1)
+                        # Save LV to image
                         image_fr_img = np.squeeze(image_fr, axis=3)
                         # # (224, 208, 12)
 
+                        # Save LV to image
                         image_fr_img = np.transpose(image_fr_img, (1,2,0))
                         image_fr_z = image_fr_img.shape[2]
                         labels_prob = ["LV-CAVITY, RV-MYOCARDIUM, and RV-CAVITY", "LV-CAVITY", "RV-MYOCARDIUM", "RV-CAVITY"]
@@ -254,6 +256,7 @@ if __name__ == '__main__':
 
                             # print(" Plotting probs...")
                             # (12, 224, 208, 4)
+                            # Save LV to image
                             prob_fr_img_prob = []
                             prob_fr_img_prob.append(prob_fr[:,:,:,0])
                             prob_fr_img_prob.append(prob_fr[:,:,:,1])
@@ -269,6 +272,7 @@ if __name__ == '__main__':
                         # for file in glob.glob(os.path.join(path_to_seg_matrices,"*.pyn")):
                         #     shutil.copy2(file,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/seg_img_matrixes')
 
+                            # Save LV to image
                             label_index = 0
                             for img_prob in prob_fr_img_prob:
                                 # print(labels_prob[label_index])
