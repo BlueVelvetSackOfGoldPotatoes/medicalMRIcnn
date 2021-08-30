@@ -19,6 +19,7 @@ def get_dicom_img(dicom_path):
     ds = pydicom.dcmread(dicom_path)
     # Extract pixel array
     new_image = ds.pixel_array.astype(float)
+    
     # Rescale the image
     scaled_image = (np.maximum(new_image, 0) / new_image.max()) * 255.0
 

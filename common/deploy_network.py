@@ -279,10 +279,14 @@ if __name__ == '__main__':
                                 if labels_prob[label_index] == 'LV-CAVITY':
                                 # (224, 208, 12)
                                     prob_fr_img = np.transpose(img_prob, (1,2,0))
-                                    plt.imshow(prob_fr_img[:, :, i], cmap='gray')
+                                    fig = plt.imshow(prob_fr_img[:, :, i], cmap='gray')
                                     # plt.show()
                                     name_tosave = path_to_seg_matrices + '/seg_matrice_img' + '_' + str(i) + '_' + str(t)
-                                    plt.savefig(name_tosave + '.png')
+                                    plt.axis('off')
+                                    fig.axes.get_xaxis().set_visible(False)
+                                    fig.axes.get_yaxis().set_visible(False)
+                                    plt.savefig(name_tosave + '.png', bbox_inches='tight', pad_inches = 0)
+                                    
                                 label_index += 1
 
                     # Finding bottleneck THESIS ----------------------------------------------------
