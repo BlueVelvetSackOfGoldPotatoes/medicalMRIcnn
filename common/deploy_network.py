@@ -51,7 +51,7 @@ tf.app.flags.DEFINE_boolean('seg4', False,
 # THESIS FLAGS
 tf.app.flags.DEFINE_boolean('make_avg_matrix', False,
                             'Code for building the avg matrix')
-tf.app.flags.DEFINE_boolean('make_seg_matrices', False,
+tf.app.flags.DEFINE_boolean('make_seg_matrices', True,
                             'Code for building segmentation matrices')
 tf.app.flags.DEFINE_boolean('deploy_updated_model', False,
                             'Process data using loaded updated model instead of pipeline')
@@ -184,11 +184,11 @@ if __name__ == '__main__':
                             # These are vanilla images (without any changes) as can be observed 
                             # plt.imshow(image_tosave, cmap='gray')
                             # plt.show()
-                            name_tosave = path_to_matrices + '/vanilla_matrice_img' + '_' + str(i)
+                            name_tosave = path_to_matrices + '/vanilla_matrice_img' + '_' + str(t) + "_" + str(i)
                             np.save(str(name_tosave), image_tosave)
                         # Copy matrices to  
-                        for file in glob.glob(os.path.join(path_to_matrices,"*.pyn")):
-                            shutil.copy2(file,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/img_matrixes')
+                        # for file in glob.glob(os.path.join(path_to_matrices,"*.pyn")):
+                        #     shutil.copy2(file,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/img_matrixes')
 
                 # Writing matrix to file THESIS ----------------------------------------------------
                 print('  Segmenting full sequence ...')
@@ -230,10 +230,12 @@ if __name__ == '__main__':
                     pred[:, :, :, t] = pred_fr
 
                     # See colored predictions
-                    # for z in range(Z):
-                    #     print('Observing {}:{}'.format(z, t))
-                    #     plt.imshow(pred[:, :, z, t])
-                    #     plt.show()
+                    for z in range(Z):
+                        plt.imshow(image[:, :, z, t])
+                        plt.show()
+                        print('Observing {}:{}'.format(z, t))
+                        plt.imshow(pred[:, :, z, t])
+                        plt.show()
 
                     # Finding bottleneck mask THESIS ----------------------------------------------------
                     if FLAGS.make_seg_matrices:
@@ -249,7 +251,7 @@ if __name__ == '__main__':
                         # Save LV to image
                         image_fr_img = np.transpose(image_fr_img, (1,2,0))
                         image_fr_z = image_fr_img.shape[2]
-                        labels_prob = ["LV-CAVITY, RV-MYOCARDIUM, and RV-CAVITY", "LV-CAVITY", "RV-MYOCARDIUM", "RV-CAVITY"]
+                        # labels_prob = ["LV-CAVITY, RV-MYOCARDIUM, and RV-CAVITY", "LV-CAVITY", "RV-MYOCARDIUM", "RV-CAVITY"]
                         for i in range(image_fr_z):
                             # plt.imshow(image_fr_img[:, :, i], cmap='gray')
                             # plt.show()
@@ -257,40 +259,43 @@ if __name__ == '__main__':
                             # print(" Plotting probs...")
                             # (12, 224, 208, 4)
                             # Save LV to image
-                            prob_fr_img_prob = []
-                            prob_fr_img_prob.append(prob_fr[:,:,:,0])
-                            prob_fr_img_prob.append(prob_fr[:,:,:,1])
-                            prob_fr_img_prob.append(prob_fr[:,:,:,2])
-                            prob_fr_img_prob.append(prob_fr[:,:,:,3])
+                            # prob_fr_img_prob = []
+                            # prob_fr_img_prob.append(prob_fr[:,:,:,0])
+                            # prob_fr_img_prob.append(prob_fr[:,:,:,1])
+                            # prob_fr_img_prob.append(prob_fr[:,:,:,2])
+                            # prob_fr_img_prob.append(prob_fr[:,:,:,3])
 
                             # Saving LV seg from bottleneck
-                            # prob_fr_img = prob_fr[i,:,:,1]
-                            # prob_fr_img = np.array(prob_fr_img)
-                            # np.save(str(name_tosave), prob_fr_img)
+                            prob_fr_img = prob_fr[i,:,:,1]
+                            prob_fr_img = np.array(prob_fr_img)
+                            # plt.imshow(prob_fr_img) 
+                            # plt.show()
+                            name_tosave = path_to_seg_matrices + '/seg_matrice_img' + '_' + str(t) + "_" + str(i)
+                            np.save(str(name_tosave), prob_fr_img)
 
                         # Copy matrices to  
                         # for file in glob.glob(os.path.join(path_to_seg_matrices,"*.pyn")):
                         #     shutil.copy2(file,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/seg_img_matrixes')
 
-                            # Save LV to image
-                            label_index = 0
-                            for img_prob in prob_fr_img_prob:
-                                # print(labels_prob[label_index])
-                                if labels_prob[label_index] == 'LV-CAVITY':
-                                # (224, 208, 12)
-                                    prob_fr_img = np.transpose(img_prob, (1,2,0))
-                                    fig = plt.imshow(prob_fr_img[:, :, i], cmap='gray')
-                                    # plt.show()
-                                    name_tosave = path_to_seg_matrices + '/seg_matrice_img' + '_' + str(i) + '_' + str(t)
-                                    plt.axis('off')
-                                    fig.axes.get_xaxis().set_visible(False)
-                                    fig.axes.get_yaxis().set_visible(False)
-                                    plt.savefig(name_tosave + '.png', bbox_inches='tight', pad_inches = 0)
-                                    
-                                label_index += 1
+                        # Save LV to image
+                        # label_index = 0
+                        # for img_prob in prob_fr_img_prob:
+                        #     # print(labels_prob[label_index])
+                        #     if labels_prob[label_index] == 'LV-CAVITY':
+                        #     # (224, 208, 12)
+                        #         prob_fr_img = np.transpose(img_prob, (1,2,0))
+                        #         fig = plt.imshow(prob_fr_img[:, :, i], cmap='gray')
+                        #         # plt.show()
+                        #         name_tosave = path_to_seg_matrices + '/seg_matrice_img' + '_' + str(i) + '_' + str(t)
+                        #         plt.axis('off')
+                        #         fig.axes.get_xaxis().set_visible(False)
+                        #         fig.axes.get_yaxis().set_visible(False)
+                        #         plt.savefig(name_tosave + '.png', bbox_inches='tight', pad_inches = 0)
+                                
+                        #     label_index += 1
 
                     # Finding bottleneck THESIS ----------------------------------------------------
-                exit()
+
                 seg_time = time.time() - start_seg_time
                 print('  Segmentation time = {:3f}s'.format(seg_time))
                 table_time += [seg_time]
@@ -411,18 +416,18 @@ if __name__ == '__main__':
         # Averaging matrix to file THESIS ----------------------------------------------------
 
         # Saving seg matrix to general folder THESIS ----------------------------------------------------
-        # If folder is not empty then load matrices, normalize them and calculate avg matrix
-        # if FLAGS.make_seg_matrices:
-        #     subject_count = 1
-        #     for matrice_path in list_seg_matrice_paths:
-        #         if len(os.listdir(matrice_path)):
-        #             # i is each matrix file
-        #             for i in os.listdir(matrice_path):
-        #                 image_i_path = os.path.join(matrice_path, i)
-        #                 new_name = image_i_path[:-4] + '_' + str(subject_count) + image_i_path[-4:]
-        #                 os.rename(image_i_path, new_name)
-        #                 shutil.copy2(new_name,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/seg_img_matrixes')
-        #         subject_count = subject_count + 1
+        # If folder is not empty then load matrices and calculate avg matrix
+        if FLAGS.make_seg_matrices:
+            subject_count = 1
+            for matrice_path in list_seg_matrice_paths:
+                if len(os.listdir(matrice_path)):
+                    # i is each matrix file
+                    for i in os.listdir(matrice_path):
+                        image_i_path = os.path.join(matrice_path, i)
+                        new_name = image_i_path[:-4] + '_' + str(subject_count) + image_i_path[-4:]
+                        os.rename(image_i_path, new_name)
+                        shutil.copy2(new_name,'/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/seg_img_matrixes')
+                subject_count = subject_count + 1
 
         # Saving seg matrix to general folder THESIS ----------------------------------------------------
 

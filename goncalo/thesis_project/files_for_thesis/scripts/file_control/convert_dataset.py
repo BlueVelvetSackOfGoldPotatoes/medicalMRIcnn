@@ -59,9 +59,9 @@ def dicom2nifti_gonc(in_dir, out_dir):
     dicom2nifti.convert_directory(in_dir, out_dir)
 
 def main():
-    dicom2nifti_gonc('/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data_jpg_demo/4/', '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_image/4/sa.nii.gz')
+    # dicom2nifti_gonc('/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data_jpg_demo/4/', '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_image/4/sa.nii.gz')
 
-    # nifti_to_jpg_dataset('/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_image/4/', '/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data_jpg_demo/4/')
+    nifti_to_jpg_dataset('/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_image/5/', '/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data/ukbb/bai_ukbb_seg_png')
 
     # dicom_to_jpg_dataset('/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data_jpg_demo/4/', '/home/goncalo/Documents/UMCG/PROJECTS/Goncalo/goncalo/data/data_jpg_demo/4/')
 

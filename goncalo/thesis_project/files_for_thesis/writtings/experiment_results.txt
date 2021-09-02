@@ -1,0 +1,179 @@
+IMAGES STANDARDIZED TO 256 BY 256
+
+Datasets: Mention how many images were used per each segmentation vector
+DIGITS: https://www.kaggle.com/vbmokin/mnist-models-testing-handwritten-digits?select=scan_smoothing_2.png
+FLOWERS: https://www.kaggle.com/sstfms/predict-flowers
+MRI BRAIN: https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection
+
+PCA:
+	We aim at the lowest number of components that yield a high fidelity image as to respect CNN minimal use of features that yield a reconstructable image at the bottleneck 
+	
+	Bai training data:
+		seg:
+			explained variance of 12 = 97.491
+			explained variance of 256 = 99.999
+		real:
+			explained variance of 256 = 99.987
+			explained variance of 12 = 98.290
+	UMCG:
+		seg:
+			explained variance of 19 = 100
+			explained variance of 12 = 99.619
+		
+		real:
+			explained variance of 19 = 99.999
+			explained variance of 12 = 98.854
+	Bai novel data:
+		seg:
+			explained variance of 14 = 99.999
+			explained variance of 5 = 99.41527
+		real:
+			explained variance of 14 = 100
+			explained variance of 8 = 98.87001706502735
+	OTHER
+		tumor:
+			explained variance of 155 = 100
+			explained variance of 130= 99.846
+			
+		flower:
+			explained variance of 6 = 99.999
+			explained variance of 3 = 87.608
+		
+		digits:
+			explained variance of 11 = 100
+			explained variance of 8 = 93.286
+			
+Results in the differences between vectors
+we expect then that bai's novel data will be further from the actual images used for training than the UMCG used for testing.
+	Bai novel data
+		SEG:
+			PCA TO MODEL MEMORY AVG VECTOR =
+			BOTTLENECK TO MODEL MEMORY AVG VECTOR =
+				ACTUAL PREDICTION QUALITY:
+					Hausdorff distance = too poor
+					Mean contour distance = too poor
+					DICE COEFFICIENT = 0.13192782221823018
+		IMGS:		
+			PCA TO MODEL MEMORY AVG VECTOR =
+			AVG VECTOR TO MODEL MEMORY AVG VECTOR =
+	UMCG data
+		SEG:
+			PCA TO MODEL MEMORY AVG VECTOR =
+			BOTTLENECK TO MODEL MEMORY AVG VECTOR =
+				ACTUAL PREDICTION QUALITY: poor
+					Hausdorff distance = too poor
+					DICE COEFFICIENT = 0.5740571981826803
+					Mean contour distance = too poor
+		IMGS:
+			PCA TO MODEL MEMORY AVG VECTOR =
+			AVG VECTOR TO MODEL MEMORY AVG VECTOR =
+	random data
+		IMGS:
+			PCA TO MODEL MEMORY AVG VECTOR =
+			AVG VECTOR TO MODEL MEMORY AVG VECTOR = 
+
+########### REGARDING THE VECTORS #############
+STD DEV TABLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+######## AVG VECTOR ########
+STD DEV of avg vector representative of dataset images used to train the model (simple Euclidean distance metric):0.24754205346107483
+STD DEV of avg vector representative of dataset segmentations used to train the model (simple Euclidean distance metric):0.1122179627418518
+
+######## UKBB Other ########
+STD DEV of avg vector representative of novel ukbb dataset used to test the model (simple Euclidean distance metric):0.23622895777225494
+STD DEV of avg vector representative of novel ukbb segmentations at the bottleneck (simple Euclidean distance metric):0.10770933330059052
+STD DEV of avg vector representative of novel ukbb dataset after fitted with PCA:0.23622940480709076
+STD DEV of avg vector representative of novel ukbb segmentations after fitted with PCA:0.10809838771820068
+
+######## UMCG ########
+STD DEV of avg vector representative of novel UMCG dataset used to test the model (simple Euclidean distance metric):0.2821970582008362
+STD DEV of avg vector representative of novel UMCG segmentations at the bottleneck (simple Euclidean distance metric):0.11117157340049744
+STD DEV of avg vector representative of novel UMCG dataset after fitted with PCA:0.2847214341163635
+STD DEV of avg vector representative of novel UMCG segmentations after fitted with PCA:0.11115115135908127
+
+######## OTHER ########
+STD DEV of avg vector representative of brain mri dataset after fitted with PCA:0.32919591665267944
+STD DEV of avg vector representative of brain mri dataset without PCA (simple Euclidean distance metric):0.3291586637496948
+STD DEV of avg vector representative of small flowers samples after fitted with PCA:0.23926672339439392
+STD DEV of avg vector representative of small flowers samples without PCA (simple Euclidean distance metric):0.22048500180244446
+STD DEV of avg vector representative of small handwritten digits samples after fitted with PCA:0.2233061045408249
+STD DEV of avg vector representative of small  handwritten digits without PCA (simple Euclidean distance metric):0.2263728380203247
+-----------------------------------------------------
+Measure like the sum of absolute differences (SAD), the sum of squared differences (SSD) or the correlation coefficient
+
+## UMCG ##
+PCA mask to avg vector mask -----------
+Mean SAD: 49.36133914523654
+Mean SSD: 1.8406412733925714
+Mean correlation: 0.07127713343553771
+Seg mask to avg vector mask -----------
+Mean SAD: 46.81560050116645
+Mean SSD: 1.8549410965707567
+Mean correlation: 0.06387663542159079
+PCA img to avg vector img -----------
+Mean SAD: 168.35044014412733
+Mean SSD: 0.78020254922698
+Mean correlation: 0.3232553739383904
+UMCG img to avg vector img -----------
+Mean SAD: 170.4578137045138
+Mean SSD: 0.7873668647844164
+Mean correlation: 0.32373031491378096
+
+## UKBB ## 
+PCA mask to avg vector mask -----------
+Mean SAD: 43.44059078509991
+Mean SSD: 1.9958688754301805
+Mean correlation: -0.003490909870760186
+Seg mask to avg vector mask -----------
+Mean SAD: 219.4970155025295
+Mean SSD: 1.8439224530247107
+Mean correlation: -0.020806204112883683
+PCA img to avg vector img -----------
+Mean SAD: 216.6937502347506
+Mean SSD: 1.9265745144623976
+Mean correlation: 0.006592087712648215
+UKBB  img to avg vector img -----------
+Mean SAD: 169.33785774817096
+Mean SSD: 0.7724994854810757
+Mean correlation: 0.10540022982523684
+
+## brain ##
+PCA img to avg vector img -----------
+Mean SAD: 125.85483373420549
+Mean SSD: 0.4581602258046174
+Mean correlation: 0.4006081033700293
+Brain MRI img to avg vector img -----------
+Mean SAD: 125.77164913995793
+Mean SSD: 0.45715228721098883
+Mean correlation: 0.4014827576353989
+
+## flowers ##
+PCA img to avg vector img -----------
+Mean SAD: 138.16238589428892
+Mean SSD: 0.48311011485929867
+Mean correlation: 0.03186831175888369
+Flower img to avg vector img -----------
+Mean SAD: 146.99657259522715
+Mean SSD: 0.5430549507518354
+Mean correlation: 0.0071730845280991605
+
+## Hand written digits ##
+PCA img to avg vector img -----------
+Mean SAD: 130.2305716165248
+Mean SSD: 0.3751096075684973
+Mean correlation: -0.16840816862152436
+Hand written digits img to avg vector img -----------
+Mean SAD: 130.3678404684757
+Mean SSD: 0.37584372816677425
+Mean correlation: -0.14025428670666518
+---------------------------------------------------------
+KRUSKAL FOR NON-PARAMETRIC DATA
+Kruskal between ukbb and novel ukbb
+For masks: KruskalResult(statistic=40482.08075226637, pvalue=0.0)
+For real images: KruskalResult(statistic=3632.6945061167835, pvalue=0.0)
+-------------------- // --------------------
+Kruskal between ukbb and novel ukbb PCAs
+For masks: KruskalResult(statistic=23119.350355156228, pvalue=0.0)
+For real images: KruskalResult(statistic=88607.6520952117, pvalue=0.0)
+
+P-value > α: The differences between the medians are not statistically significant
+    If the p-value is greater than the significance level, you do not have enough evidence to reject the null hypothesis that the group medians are all equal.

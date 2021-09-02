@@ -76,17 +76,17 @@ def short_axis():
     '''
     # Deploy the segmentation network
     print('Deploying the segmentation network ...')
-    os.system('python3 common/deploy_network.py')
+    os.system("python3 '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/common/deploy_network.py'")
 
     # Evaluate ventricular volumes
     print('Evaluating ventricular volumes ...')
-    os.system('python3 short_axis/eval_ventricular_volume.py --data_dir demo_image '
-            '--output_csv demo_csv/table_ventricular_volume.csv')
+    os.system('python3 ./short_axis/eval_ventricular_volume.py --data_dir demo_image '
+            '--output_csv "/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_csv/table_ventricular_volume.csv"')
 
     # Evaluate wall thickness
     print('Evaluating myocardial wall thickness ...')
-    os.system('python3 short_axis/eval_wall_thickness.py --data_dir demo_image '
-              '--output_csv demo_csv/table_wall_thickness.csv')
+    os.system('python3 ./short_axis/eval_wall_thickness.py --data_dir demo_image '
+              '--output_csv "/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/demo_csv/table_wall_thickness.csv"')
     
     print('Done.')
 
@@ -108,7 +108,7 @@ def main():
     # image_to_matrix()
 
     short_axis()
-    os.system("python '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/scripts/file_control/convert_dataset.py'")
+    # os.system("python '/home/goncalo/Documents/RUG/4th Year/2B/thesis/medicalMRIcnn/goncalo/thesis_project/files_for_thesis/scripts/file_control/convert_dataset.py'")
 
     # train_short_axis()
 
